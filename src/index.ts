@@ -32,7 +32,7 @@ export default {
 		// 路由: /api/v1/qqmail_head/{email}
 
 		if (url.pathname.startsWith('/api/v1/qqmail_head/')) {
-			const head_email = url.pathname.slice('/api/v1/qqmail_head/'.length);
+			const head_email = decodeURIComponent(url.pathname.replace('/api/v1/qqmail_head/', ''));
 			// 验证有效性
 			if (head_email.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/) === null) {
 				return Response.json({ error: 'Invalid email format' }, { status: 400 });
@@ -45,7 +45,7 @@ export default {
 				const cookies = await cloud_cookie(host, uuid, password, crypto_type);
 				// 筛选mail.qq.com域下的cookie
 				const mail_cookies = cookies.filter(cookie => cookie.domain === '.mail.qq.com');
-				const url = `https://wx.mail.qq.com/info/geticon?addr=${head_email}&type=0`;
+				const url = `https://wx.mail.qq.com/info/geticon?addr=${encodeURIComponent(head_email)}&type=0`;
 				console.log(url);
 
 				const cacheKey = new Request(url);
