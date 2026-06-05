@@ -33,6 +33,7 @@ export default {
 
 		if (url.pathname.startsWith('/api/v1/qqmail_head/')) {
 			const head_email = decodeURIComponent(url.pathname.replace('/api/v1/qqmail_head/', ''));
+			const isCleanCache = url.searchParams.get('clean') === 'true';
 			// 验证有效性
 			if (head_email.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/) === null) {
 				return Response.json({ error: 'Invalid email format' }, { status: 400 });
@@ -50,7 +51,7 @@ export default {
 
 				const cacheKey = new Request(url);
 				let response: Response | undefined = await cache.match(cacheKey) as Response;
-				if (response) {
+				if (response && !isCleanCache) {
 					console.log(`[Image] Cache hit for ${url}`);
 				} else {
 					const originRes = await fetch(url, {
